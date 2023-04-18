@@ -21,25 +21,24 @@
         margin-bottom: 0;
       }
       body {
-        background: #000 url('https://wallpapercave.com/wp/wp1873571.jpg') no-repeat center center fixed;
-        background-size: cover;
+        background: #005b9f;
         color: #fff;
-        font-family: 'Star Jedi', sans-serif;
+        font-family:  sans-serif;
       }
       .container {
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 92, 159, 0.8);
         border-radius: 0.25rem;
         padding: 1rem;
       }
       .form-control {
-        background: rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.2);
         color: #fff;
         border-color: transparent;
         border-radius: 0.25rem;
         padding: 0.5rem 1rem;
       }
       .form-control:focus {
-        background: rgba(255,255,255,0.4);
+        background: rgba(255, 255, 255, 0.4);
         color: #fff;
         border-color: transparent;
         outline: none;
@@ -50,35 +49,35 @@
         padding: 0.5rem 1rem;
       }
       .btn-primary {
-        background: #FFD700;
-        color: #000;
+        background: #00aaff;
+        color: #fff;
       }
       .btn-primary:hover {
-        background: #FFE600;
-        color: #000;
+        background: #00ccff;
+        color: #fff;
       }
       .btn-danger {
-        background: #ff4136;
+        background: #00ccff;
         color: #fff;
       }
       .btn-danger:hover {
-        background: #ff2e19;
+        background: #00ccff;
         color: #fff;
       }
       .queue-item {
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 92, 159, 0.8);
         color: #fff;
       }
       .queue-item button {
-        background: #ff4136;
+        background: #00ccff;
         color: #fff;
       }
       .queue-item button:hover {
-        background: #ff2e19;
+        background: #00ccff;
         color: #fff;
       }
       .timer-container {
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 92, 159, 0.8);
         border-radius: 0.25rem;
         padding: 1rem;
         margin-top: 1rem;
@@ -87,35 +86,34 @@
         font-size: 2rem;
         font-weight: bold;
         margin-right: 1rem;
-        color: #FFD700;
+        color: #00aaff;
       }
       .timer-value {
-        background: rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.2);
         color: #fff;
         padding: 0.5rem;
         border-radius: 0.25rem;
       }
       .btn-start {
-        background: #FFD700;
-        color: #000;
+        background: #00aaff;
+        color: #fff;
       }
       .btn-start:hover {
-        background: #FFE600;
-        color: #000;
+        background: #00ccff;
+        color: #fff;
       }
       .btn-stop {
-        background: #ff4136;
+        background: #00ccff;
         color: #fff;
       }
       .btn-stop:hover {
-       
-        background: #ff2e19;
-        color: #fff;
-      }
-    </style>
-    <link href="https://fonts.googleapis.com/css?family=Star+Jedi&display=swap" rel="stylesheet">
-  </head>
-  <body>
+        background: #00ccff;
+        color: #
+}
+</style>
+
+</head>
+<body>
     <div class="container mx-auto mt-8 px-4 py-8">
       <div class="mb-4">
         <label for="item" class="text-xl font-bold text-white mr-4">Enter item:</label>
@@ -145,98 +143,97 @@
       const stopButton = document.getElementById('stop-button');
       const timerLabel = document.getElementById('timer');
       const beepSound = new Audio('https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3');
+let queue = [];
+  let timerInterval = null;
+  let startTime = null;
+  let pauseTime = 0;
+  let timerRunning = false;
 
-      let queue = [];
-      let timerInterval = null;
-      let startTime = null;
-      let pauseTime = 0;
-      let timerRunning = false;
+  function addItem() {
+    const item = itemInput.value;
+    queue.push(item);
+    itemInput.value = '';
+    renderQueue();
+    console.log(`${item} added to queue.`);
+  }
 
-      function addItem() {
-        const item = itemInput.value;
-        queue.push(item);
-        itemInput.value = '';
-        renderQueue();
-        console.log(`${item} added to queue.`);
+  function removeItem() {
+    if (queue.length > 0) {
+      const item = queue.shift();
+      renderQueue();
+      console.log(`${item} removed from queue.`);
+    } else {
+      console.log('Queue is empty.');
+    }
+  }
+
+  function startTimer() {
+    if (!timerRunning) {
+      if (pauseTime === 0) {
+        startTime = Date.now();
+      } else {
+        startTime = Date.now() - pauseTime;
+        pauseTime = 0;
       }
+      timerInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const minutes = Math.floor(elapsed / 60000);
+        const seconds = Math.floor((elapsed % 60000) / 1000);
+        timerLabel.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        if (seconds === 0 && (minutes % 1 === 0)) {
+          beepSound.play();
+        }
+      }, 1000);
+      timerRunning = true;
+      startButton.textContent = 'Pause Timer';
+    } else {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      pauseTime = Date.now() - startTime;
+      timerRunning = false;
+      start
+Button.textContent = 'Resume Timer';
+}
+}
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    pauseTime = 0;
+    startTime = null;
+    timerRunning = false;
+    timerLabel.textContent = '00:00';
+    startButton.textContent = 'Start Timer';
+  }
 
-      function removeItem() {
-        if (queue.length > 0) {
-          const item = queue.shift();
+  function renderQueue() {
+    queueList.innerHTML = queue.map(item => {
+      return `
+        <li class="queue-item">
+          <span>${item}</span>
+          <button class="text-white" data-item="${item}">x</button>
+        </li>
+      `;
+    }).join('');
+    const removeButtons = document.querySelectorAll('.queue-item button');
+    removeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const item = button.getAttribute('data-item');
+        const index = queue.indexOf(item);
+        if (index !== -1) {
+          queue.splice(index, 1);
           renderQueue();
           console.log(`${item} removed from queue.`);
-        } else {
-          console.log('Queue is empty.');
         }
-      }
+      });
+    });
+  }
 
-      function startTimer() {
-        if (!timerRunning) {
-          if (pauseTime === 0) {
-            startTime = Date.now();
-          } else {
-            startTime = Date.now() - pauseTime;
-            pauseTime = 0;
-          }
-          timerInterval = setInterval(() => {
-            const elapsed = Date.now() - startTime;
-            const minutes = Math.floor(elapsed / 60000);
-            const seconds = Math.floor((elapsed % 60000) / 1000);
-            timerLabel.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            if (seconds === 0 && (minutes % 1 === 0)) {
-              beepSound.play();
-            }
-          }, 1000);
-          timerRunning = true;
-          startButton.textContent = 'Pause Timer';
-        } else {
-          clearInterval(timerInterval);
-          timerInterval = null;
-          pauseTime = Date.now() - startTime;
-          timerRunning = false;
-          startButton.textContent = 'Resume Timer';
-        }
-      }
+  addButton.addEventListener('click', addItem);
+  removeButton.addEventListener('click', removeItem);
+  startButton.addEventListener('click', startTimer);
+  stopButton.addEventListener('click', stopTimer);
 
-      function stopTimer() {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        pauseTime = 0;
-        startTime = null;
-        timerRunning = false;
-        timerLabel.textContent = '00:00';
-        startButton.textContent = 'Start Timer';
-      }
-
-      function renderQueue() {
-        queueList.innerHTML = queue.map(item => {
-          return `
-            <li class="queue-item">
-              <span>${item}</span>
-              <button class="text-white" data-item="${item}">x</button>
-            </li>
-          `;
-        }).join('');
-        const removeButtons = document.querySelectorAll('.queue-item button');
-        removeButtons.forEach(button => {
-          button.addEventListener('click', () => {
-            const item = button.getAttribute('data-item');
-            const index = queue.indexOf(item);
-            if (index !== -1) {
-              queue.splice(index, 1);
-              renderQueue();
-              console.log(`${item} removed from queue.`);
-            }
-          });
-        });
-      }
-
-      addButton.addEventListener('click', addItem);
-      removeButton.addEventListener('click', removeItem);
-      startButton.addEventListener('click', startTimer);
-      stopButton.addEventListener('click', stopTimer);
-
-      renderQueue();
-    </script>
-  </body>
+  renderQueue();
+</script>
+</body>
 </html>
